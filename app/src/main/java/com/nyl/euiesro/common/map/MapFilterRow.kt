@@ -1,0 +1,89 @@
+package com.nyl.euiesro.common.map
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+@Composable
+fun MapFilterRow(
+    items: List<Pair<String, String>>,
+    selectedKey: String?,
+    onSelect: (String?) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyRow(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        item {
+            MapFilterChip(
+                label = "Toate",
+                selected = selectedKey == null,
+                onClick = { onSelect(null) }
+            )
+        }
+        items(items) { (key, label) ->
+            MapFilterChip(
+                label = label,
+                selected = selectedKey == key,
+                onClick = { onSelect(if (selectedKey == key) null else key) }
+            )
+        }
+    }
+}
+
+@Composable
+fun MapFilterChip(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    val colors = MaterialTheme.colorScheme
+    val selectedBg = colors.primary.copy(alpha = 0.82f)
+    val selectedText = colors.onPrimary
+    val defaultBg = colors.surface.copy(alpha = 0.62f)
+    val defaultText = colors.onSurfaceVariant
+    val glassBorder = colors.outline.copy(alpha = 0.22f)
+
+    Surface(
+        modifier = Modifier
+            .height(38.dp)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(20.dp),
+        color = if (selected) selectedBg else defaultBg,
+        tonalElevation = 0.dp,
+        border = BorderStroke(1.dp, glassBorder),
+        shadowElevation = 2.dp
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = label,
+                color = if (selected) selectedText else defaultText,
+                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+                fontSize = 14.sp,
+                maxLines = 1
+            )
+        }
+    }
+}
